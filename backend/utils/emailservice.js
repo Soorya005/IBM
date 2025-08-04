@@ -3,10 +3,15 @@ const nodemailer = require('nodemailer');
 class EmailService {
     constructor() {
         this.transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
+            },
+            tls: {
+                rejectUnauthorized: false
             }
         });
     }
@@ -18,6 +23,13 @@ class EmailService {
             const results = await Promise.allSettled(emailPromises);
             const successful = results.filter(result => result.status === 'fulfilled').length;
             const failed = results.filter(result => result.status === 'rejected').length;
+
+            // Log detailed errors for failed emails
+            results.forEach((result, index) => {
+                if (result.status === 'rejected') {
+                    console.error(`Email failed for user ${users[index].email}:`, result.reason);
+                }
+            });
 
             console.log(`📧 Email alerts: ${successful} sent, ${failed} failed`);
             return { successful, failed, total: users.length };
