@@ -1,70 +1,70 @@
 const nodemailer = require('nodemailer');
 
 class EmailService {
-    constructor() {
-        this.transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
-            auth: {
-                user: process.env.EMAIL_USER,
-                pass: process.env.EMAIL_PASS
-            },
-            tls: {
-                rejectUnauthorized: false
-            }
-        });
-    }
+  constructor() {
+    this.transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
+  }
 
-    async sendWildlifeAlert(users, detections, location) {
-        const emailPromises = users.map(user => this.sendAlertEmail(user, detections, location));
+  async sendWildlifeAlert(users, detections, location) {
+    const emailPromises = users.map(user => this.sendAlertEmail(user, detections, location));
 
-        try {
-            const results = await Promise.allSettled(emailPromises);
-            const successful = results.filter(result => result.status === 'fulfilled').length;
-            const failed = results.filter(result => result.status === 'rejected').length;
+    try {
+      const results = await Promise.allSettled(emailPromises);
+      const successful = results.filter(result => result.status === 'fulfilled').length;
+      const failed = results.filter(result => result.status === 'rejected').length;
 
-            // Log detailed errors for failed emails
-            results.forEach((result, index) => {
-                if (result.status === 'rejected') {
-                    console.error(`Email failed for user ${users[index].email}:`, result.reason);
-                }
-            });
-
-            console.log(`📧 Email alerts: ${successful} sent, ${failed} failed`);
-            return { successful, failed, total: users.length };
-        } catch (error) {
-            console.error('❌ Email service error:', error);
-            throw error;
+      // Log detailed errors for failed emails
+      results.forEach((result, index) => {
+        if (result.status === 'rejected') {
+          console.error(`Email failed for user ${users[index].email}:`, result.reason);
         }
-    }
+      });
 
-    async sendAlertEmail(user, detections, location) {
-        const detectionList = detections.map(detection =>
-            `<li style="margin: 5px 0;">
+      console.log(`📧 Email alerts: ${successful} sent, ${failed} failed`);
+      return { successful, failed, total: users.length };
+    } catch (error) {
+      console.error('❌ Email service error:', error);
+      throw error;
+    }
+  }
+
+  async sendAlertEmail(user, detections, location) {
+    const detectionList = detections.map(detection =>
+      `<li style="margin: 5px 0;">
         <strong>${detection.class}</strong> 
         <span style="color: #666;">(${(detection.confidence * 100).toFixed(1)}% confidence)</span>
       </li>`
-        ).join('');
+    ).join('');
 
-        const currentTime = new Date().toLocaleString('en-IN', {
-            timeZone: 'Asia/Kolkata',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit'
-        });
+    const currentTime = new Date().toLocaleString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
 
-        const mailOptions = {
-            from: {
-                name: 'Wildlife Alert System',
-                address: process.env.EMAIL_USER
-            },
-            to: user.email,
-            subject: '🚨 URGENT: Wildlife Detected in Your Area - Immediate Safety Alert',
-            html: `
+    const mailOptions = {
+      from: {
+        name: 'Wildlife Alert System',
+        address: process.env.EMAIL_USER
+      },
+      to: user.email,
+      subject: '🚨 URGENT: Wildlife Detected in Your Area - Immediate Safety Alert',
+      html: `
         <!DOCTYPE html>
         <html>
         <head>
@@ -167,21 +167,21 @@ class EmailService {
         </body>
         </html>
       `
-        };
+    };
 
-        return this.transporter.sendMail(mailOptions);
-    }
+    return this.transporter.sendMail(mailOptions);
+  }
 
-    async testConnection() {
-        try {
-            await this.transporter.verify();
-            console.log('✅ Email service is ready');
-            return true;
-        } catch (error) {
-            console.error('❌ Email service connection failed:', error.message);
-            return false;
-        }
+  async testConnection() {
+    try {
+      await this.transporter.verify();
+      console.log('✅ Email service is ready');
+      return true;
+    } catch (error) {
+      console.error('❌ Email service connection failed:', error.message);
+      return false;
     }
+  }
 }
 
 module.exports = new EmailService();
