@@ -42,33 +42,32 @@ const userSchema = new mongoose.Schema(
         }
     },
     {
-        timestamps: true, // Adds createdAt and updatedAt automatically
+        timestamps: true,
     }
 );
 
-// Index for faster queries
+
 userSchema.index({ email: 1 });
 userSchema.index({ pincode: 1 });
 userSchema.index({ isActive: 1 });
 
-// Virtual for user's full info
+
 userSchema.virtual('userInfo').get(function () {
     return `${this.name} (${this.email}) - ${this.pincode}`;
 });
 
-// Pre-save middleware to update alertsReceived
+
 userSchema.methods.incrementAlerts = function () {
     this.alertsReceived += 1;
     this.lastAlertAt = new Date();
     return this.save();
 };
 
-// Static method to find users by pincode
+
 userSchema.statics.findByPincode = function (pincode) {
     return this.find({ pincode, isActive: true });
 };
 
-// Static method to get user statistics
 userSchema.statics.getStats = async function () {
     const stats = await this.aggregate([
         {

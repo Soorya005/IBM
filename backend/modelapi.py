@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """
 Wildlife Detection API Script
 Integrates with Roboflow API for wildlife detection
@@ -14,13 +14,13 @@ def detect_wildlife(image_path):
     Detect wildlife in the given image and return results as JSON
     """
     try:
-        # Initialize the Roboflow client
+      
         CLIENT = InferenceHTTPClient(
             api_url="https://serverless.roboflow.com",
             api_key="3lhC7048NqprBfNeQuHo"
         )
         
-        # Validate image file
+    
         if not os.path.exists(image_path):
             return {
                 "success": False,
@@ -29,9 +29,9 @@ def detect_wildlife(image_path):
                 "total_detections": 0
             }
         
-        # Check file size (optional)
+        
         file_size = os.path.getsize(image_path)
-        if file_size > 10 * 1024 * 1024:  # 10MB limit
+        if file_size > 10 * 1024 * 1024:  
             return {
                 "success": False,
                 "error": "Image file too large (max 10MB)",
@@ -39,16 +39,18 @@ def detect_wildlife(image_path):
                 "total_detections": 0
             }
         
-        # Get predictions from Roboflow
+       
         result = CLIENT.infer(image_path, model_id="wild-animal-x055y/1")
         
-        # Process detections
+       
         detections = []
         if 'predictions' in result and result['predictions']:
             for prediction in result['predictions']:
-                # Filter detections by confidence threshold
+                
+                
                 confidence = prediction.get('confidence', 0)
-                if confidence >= 0.3:  # Only include detections with >30% confidence
+                if confidence >= 0.3:  
+                    
                     detection = {
                         "class": prediction.get('class', 'Unknown'),
                         "confidence": confidence,
@@ -91,7 +93,8 @@ def main():
         image_path = sys.argv[1]
         result = detect_wildlife(image_path)
     
-    # Output JSON result to stdout for Node.js to capture
+    
+    
     print(json.dumps(result, indent=None, separators=(',', ':')))
 
 if __name__ == "__main__":

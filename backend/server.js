@@ -7,18 +7,21 @@ require('./config/database');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve uploaded files statically
+
+
 app.use('/uploads', express.static('uploads'));
 
-// Routes
+
+
 app.use('/api', require('./routes/auth'));
 
-// Health check route
+
 app.get('/health', (req, res) => {
     res.json({
         status: 'OK',
@@ -27,7 +30,8 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Error handling middleware
+
+
 app.use((error, req, res, next) => {
     console.error('Error:', error);
 
@@ -45,7 +49,8 @@ app.use((error, req, res, next) => {
     });
 });
 
-// Start server
+
+
 app.listen(PORT, () => {
     console.log(`🚀 Wildlife Detection Server running on port ${PORT}`);
     console.log(`📧 Email service configured for: ${process.env.EMAIL_USER}`);

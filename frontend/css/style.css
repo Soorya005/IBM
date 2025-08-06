@@ -9,7 +9,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: #333;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #45f207e3 0%, #764ba2 100%);
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
@@ -186,7 +186,7 @@ body {
 }
 
 .card-header {
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    background: linear-gradient(135deg, #098402da, #0a7d04da);
     color: white;
     padding: 30px;
     text-align: center;
@@ -393,7 +393,7 @@ body {
 }
 
 .btn-secondary {
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    background: linear-gradient(135deg, #f30202c5, #960202);
     color: white;
 }
 
