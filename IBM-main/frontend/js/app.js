@@ -4,7 +4,7 @@
 
 class WildlifeDetectionApp {
     constructor() {
-        this.API_BASE = 'https://ibm-ofmn.onrender.com/';
+        this.API_BASE = 'https://wildguard-2d18.onrender.com/';
         this.initializeEventListeners();
         this.initializeFileUpload();
         this.testServerConnection();
