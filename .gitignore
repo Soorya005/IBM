@@ -1,0 +1,5 @@
+
+# Ignore node_modules and package-lock.json for IMB-main backend
+IMB-main/backend/node_modules/
+IMB-main/backend/package-lock.json
+
