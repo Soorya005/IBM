@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wildlife Detection & Alert System</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="floating-icons">
+            <i class="fas fa-paw"></i>
+            <i class="fas fa-tree"></i>
+            <i class="fas fa-mountain"></i>
+            <i class="fas fa-leaf"></i>
+            <i class="fas fa-feather"></i>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-eye"></i>
+                    <h1>WildGuard AI</h1>
+                </div>
+                <p class="tagline">Protecting Communities Through Smart Wildlife Detection</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="hero-content">
+                    <h2>🛡️ Stay Safe with AI-Powered Wildlife Monitoring</h2>
+                    <p>Register to receive instant alerts when wildlife is detected in your area</p>
+                </div>
+            </section>
+
+            <!-- Registration Section -->
+            <section class="section registration-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-user-plus"></i> User Registration</h3>
+                        <p>Join our community alert network</p>
+                    </div>
+                    <div class="card-body">
+                        <form id="registrationForm" class="form">
+                            <div class="form-group">
+                                <label for="name">
+                                    <i class="fas fa-user"></i>
+                                    Full Name
+                                </label>
+                                <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">
+                                    <i class="fas fa-envelope"></i>
+                                    Email Address
+                                </label>
+                                <input type="email" id="email" name="email" required placeholder="Enter your email">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="pincode">
+                                    <i class="fas fa-map-pin"></i>
+                                    Pincode
+                                </label>
+                                <input type="text" id="pincode" name="pincode" required
+                                    placeholder="Enter 6-digit pincode" pattern="[0-9]{6}" maxlength="6">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check"></i>
+                                Register for Alerts
+                            </button>
+                        </form>
+                        <div id="registrationResult" class="result-message"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detection Section -->
+            <section class="section detection-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-camera"></i> Wildlife Detection</h3>
+                        <p>Upload an image to test our AI detection system</p>
+                    </div>
+                    <div class="card-body">
+                        <form id="detectionForm" class="form">
+                            <div class="form-group">
+                                <label for="testEmail">
+                                    <i class="fas fa-envelope"></i>
+                                    Your Email (for testing)
+                                </label>
+                                <input type="email" id="testEmail" name="email" required
+                                    placeholder="Enter your registered email">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="file-upload-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    Upload Wildlife Image
+                                </label>
+                                <div class="file-upload-container">
+                                    <input type="file" id="imageFile" name="image" accept="image/*" required>
+                                    <div class="file-upload-area" id="fileUploadArea">
+                                        <div class="upload-icon">
+                                            <i class="fas fa-image"></i>
+                                        </div>
+                                        <div class="upload-text">
+                                            <p>Click to select image or drag and drop</p>
+                                            <span>Supports: JPG, PNG, GIF (Max 5MB)</span>
+                                        </div>
+                                    </div>
+                                    <div class="file-preview" id="filePreview"></div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="fas fa-search"></i>
+                                <span class="btn-text">Detect Wildlife</span>
+                            </button>
+                        </form>
+                        <div id="detectionResult" class="result-message"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Info Section -->
+            <section class="info-section">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4>AI-Powered Detection</h4>
+                        <p>Advanced machine learning algorithms identify wildlife with high accuracy</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <h4>Instant Alerts</h4>
+                        <p>Receive immediate email notifications when wildlife is detected in your area</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>Community Safety</h4>
+                        <p>Protecting entire neighborhoods through collaborative monitoring</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2024 WildGuard AI. Protecting communities through technology.</p>
+                <div class="footer-links">
+                    <span>Emergency: Forest Dept (1926) | Police (100) | Medical (108)</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Processing wildlife detection...</p>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
