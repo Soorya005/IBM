@@ -67,7 +67,7 @@ const initializeApp = async () => {
         console.log('📡 Routes configured successfully');
         
         // Start server only after everything is initialized
-        app.listen(PORT, () => {
+        app.listen(PORT,'0.0.0.0', () => {
             console.log(`🚀 Wildlife Detection Server running on port ${PORT}`);
             console.log(`📧 Email service configured for: ${process.env.EMAIL_USER}`);
             console.log(`📍 Camera monitoring pincode: ${process.env.CAMERA_PINCODE}`);
