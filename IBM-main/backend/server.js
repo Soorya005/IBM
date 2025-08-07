@@ -28,6 +28,6 @@ app.get('/', (req, res) => {
 // app.use('/api', yourRoutes);
 
 // Start the server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`🎉 Wildlife Detection System Backend is running on port ${PORT}`);
 });
