@@ -1,0 +1,14 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "Frontend for IBM-main project",
+  "main": "index.html",
+  "scripts": {
+    "start": "nodemon index.html"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}
