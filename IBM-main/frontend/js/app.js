@@ -4,8 +4,8 @@
 
 class WildlifeDetectionApp {
     constructor() {
-        // this.API_BASE = 'https://wildguard-7vhc.onrender.com/api';
-        this.API_BASE = 'http://localhost:5000/api';
+        this.API_BASE = 'https://wildguard-7vhc.onrender.com/api';
+        // this.API_BASE = 'http://localhost:5000/api';
         this.initializeEventListeners();
         this.initializeFileUpload();
         this.testServerConnection();
