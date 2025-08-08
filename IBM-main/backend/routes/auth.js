@@ -48,7 +48,7 @@ router.get('/users', async (req, res) => {
     try {
         // Double-check connection before database operation
         await waitForConnection();
-        
+
         const users = await User.find({})
             .select('-__v')
             .sort({ createdAt: -1 });
@@ -60,14 +60,14 @@ router.get('/users', async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching users:', error);
-        
+
         if (error.message.includes('connection') || error.message.includes('timeout')) {
             return res.status(503).json({
                 success: false,
                 message: 'Database connection issue. Please try again.'
             });
         }
-        
+
         res.status(500).json({
             success: false,
             message: 'Failed to fetch users'
@@ -75,11 +75,13 @@ router.get('/users', async (req, res) => {
     }
 });
 
+
+
 // Get statistics with connection check
 router.get('/stats', async (req, res) => {
     try {
         await waitForConnection();
-        
+
         const stats = await User.getStats();
         res.status(200).json({
             success: true,
@@ -87,14 +89,14 @@ router.get('/stats', async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching stats:', error);
-        
+
         if (error.message.includes('connection') || error.message.includes('timeout')) {
             return res.status(503).json({
                 success: false,
                 message: 'Database connection issue. Please try again.'
             });
         }
-        
+
         res.status(500).json({
             success: false,
             message: 'Failed to fetch statistics'
@@ -170,8 +172,8 @@ router.post('/register', async (req, res) => {
         }
 
         // Handle connection/timeout errors
-        if (error.message.includes('connection') || 
-            error.message.includes('timeout') || 
+        if (error.message.includes('connection') ||
+            error.message.includes('timeout') ||
             error.name === 'MongooseError') {
             return res.status(503).json({
                 success: false,
@@ -237,7 +239,7 @@ router.post('/detect-wildlife', upload.single('image'), async (req, res) => {
                 if (result.detections && result.detections.length > 0) {
                     // Ensure database connection before querying users
                     await waitForConnection(10000);
-                    
+
                     const cameraLocation = process.env.CAMERA_PINCODE || '633800';
                     const usersInArea = await User.findByPincode(cameraLocation);
 
@@ -299,14 +301,14 @@ router.post('/detect-wildlife', upload.single('image'), async (req, res) => {
 
             } catch (parseError) {
                 console.error('Error processing detection results:', parseError);
-                
+
                 if (parseError.message.includes('connection') || parseError.message.includes('timeout')) {
                     return res.status(503).json({
                         success: false,
                         message: 'Database connection issue during alert processing'
                     });
                 }
-                
+
                 res.status(500).json({
                     success: false,
                     message: 'Failed to process detection results',
@@ -359,7 +361,7 @@ router.post('/detect-wildlife', upload.single('image'), async (req, res) => {
 router.get('/users/pincode/:pincode', async (req, res) => {
     try {
         await waitForConnection();
-        
+
         const users = await User.findByPincode(req.params.pincode);
         res.status(200).json({
             success: true,
@@ -369,14 +371,14 @@ router.get('/users/pincode/:pincode', async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching users by pincode:', error);
-        
+
         if (error.message.includes('connection') || error.message.includes('timeout')) {
             return res.status(503).json({
                 success: false,
                 message: 'Database connection issue. Please try again.'
             });
         }
-        
+
         res.status(500).json({
             success: false,
             message: 'Failed to fetch users'

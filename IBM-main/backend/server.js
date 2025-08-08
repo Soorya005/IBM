@@ -2,6 +2,7 @@
 
 const express = require('express');
 const dotenv = require('dotenv');
+const apiRoutes = require('./routes/auth.js'); // Adjusted path based on structure
 const connectDB = require('./config/database'); // Adjusted path based on structure
 
 // Load environment variables from .env
@@ -25,7 +26,7 @@ app.get('/', (req, res) => {
 // TODO: Add your actual routes here
 // Example:
 // const yourRoutes = require('./routes/yourRoutes');
-// app.use('/api', yourRoutes);
+app.use('/api', apiRoutes);
 
 // Start the server
 app.listen(PORT, '0.0.0.0', () => {
