@@ -5,7 +5,6 @@ const fs = require('fs');
 const { spawn } = require('child_process');
 const User = require('../models/user');
 const emailService = require('../utils/emailService');
-const { ensureConnection, waitForConnection, isConnected } = require('../config/database');
 
 const router = express.Router();
 
@@ -40,14 +39,11 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 }
 });
 
-// Apply connection middleware to all routes
-router.use(ensureConnection);
 
 // Get all users with connection check
 router.get('/users', async (req, res) => {
     try {
-        // Double-check connection before database operation
-        await waitForConnection();
+
 
         const users = await User.find({})
             .select('-__v')
@@ -80,7 +76,7 @@ router.get('/users', async (req, res) => {
 // Get statistics with connection check
 router.get('/stats', async (req, res) => {
     try {
-        await waitForConnection();
+
 
         const stats = await User.getStats();
         res.status(200).json({
@@ -117,10 +113,7 @@ router.post('/register', async (req, res) => {
             });
         }
 
-        // Ensure connection is ready before database operations
-        console.log('🔍 Checking database connection for user registration...');
-        await waitForConnection(15000); // Wait up to 15 seconds
-        console.log('✅ Database connection verified for registration');
+
 
         // Check for existing user
         console.log('🔍 Checking for existing user...');
@@ -237,8 +230,7 @@ router.post('/detect-wildlife', upload.single('image'), async (req, res) => {
 
                 // Handle wildlife detections with database connection check
                 if (result.detections && result.detections.length > 0) {
-                    // Ensure database connection before querying users
-                    await waitForConnection(10000);
+
 
                     const cameraLocation = process.env.CAMERA_PINCODE || '633800';
                     const usersInArea = await User.findByPincode(cameraLocation);
@@ -360,7 +352,7 @@ router.post('/detect-wildlife', upload.single('image'), async (req, res) => {
 // Get users by pincode with connection check
 router.get('/users/pincode/:pincode', async (req, res) => {
     try {
-        await waitForConnection();
+
 
         const users = await User.findByPincode(req.params.pincode);
         res.status(200).json({

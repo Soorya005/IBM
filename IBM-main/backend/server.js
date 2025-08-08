@@ -2,7 +2,7 @@
 
 const express = require('express');
 const dotenv = require('dotenv');
-const apiRoutes = require('./routes/auth.js'); // Adjusted path based on structure
+const apiRoutes = require('./routes/auth'); // Adjusted path based on structure
 const connectDB = require('./config/database'); // Adjusted path based on structure
 
 // Load environment variables from .env
