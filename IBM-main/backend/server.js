@@ -4,6 +4,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const apiRoutes = require('./routes/auth'); // Adjusted path based on structure
 const connectDB = require('./config/database'); // Adjusted path based on structure
+const cors = require('cors');
 
 // Load environment variables from .env
 dotenv.config();
@@ -14,6 +15,7 @@ connectDB();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+app.use(cors());
 // Middleware (e.g., body parser)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

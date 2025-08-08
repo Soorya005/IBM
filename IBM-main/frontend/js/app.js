@@ -4,7 +4,7 @@
 
 class WildlifeDetectionApp {
     constructor() {
-        this.API_BASE = 'https://wildguard-7vhc.onrender.com/api/stats';
+        this.API_BASE = 'https://wildguard-7vhc.onrender.com/api';
         this.initializeEventListeners();
         this.initializeFileUpload();
         this.testServerConnection();
@@ -388,8 +388,10 @@ class WildlifeDetectionApp {
     // Test server connection
     async testServerConnection() {
         try {
-            const response = await fetch(`${this.API_BASE.replace('/api', '')}/health`);
-            if (response.ok) {
+            const response = await fetch(`${this.API_BASE}/stats`);
+            if (response.text) {
+                const data = await response.json();
+                console.log('🌐 Server connection successful:', data);
                 console.log('✅ Server connection successful');
             } else {
                 console.warn('⚠️ Server connection issues');
