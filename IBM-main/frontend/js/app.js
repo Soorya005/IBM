@@ -389,9 +389,7 @@ class WildlifeDetectionApp {
     async testServerConnection() {
         try {
             const response = await fetch(`${this.API_BASE}/stats`);
-            if (response.text) {
-                const data = await response.json();
-                console.log('🌐 Server connection successful:', data);
+            if (response.ok) {
                 console.log('✅ Server connection successful');
             } else {
                 console.warn('⚠️ Server connection issues');
