@@ -4,7 +4,8 @@
   "description": "Frontend for IBM-main project",
   "main": "index.html",
   "scripts": {
-    "start": "nodemon index.html"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "author": "",
   "license": "ISC",
