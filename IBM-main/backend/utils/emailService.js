@@ -1,8 +1,14 @@
+
+
+require('dotenv').config();
 const nodemailer = require('nodemailer');
 
 class EmailService {
   constructor() {
+
+    console.log();
     this.transporter = nodemailer.createTransport({
+      service: 'gmail',
       host: 'smtp.gmail.com',
       port: 465,
       secure: true,

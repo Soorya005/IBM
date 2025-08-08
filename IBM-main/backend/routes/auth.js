@@ -5,6 +5,7 @@ const fs = require('fs');
 const { spawn } = require('child_process');
 const User = require('../models/user');
 const emailService = require('../utils/emailService');
+const { detectWildlife } = require('../modelapi');
 
 const router = express.Router();
 
@@ -196,159 +197,112 @@ router.post('/detect-wildlife', upload.single('image'), async (req, res) => {
         imagePath = req.file.path;
         console.log(`🔍 Processing wildlife detection for image: ${req.file.filename}`);
 
-        // Process image with Python script
-        const pythonProcess = spawn('F:/IBM-main/.venv/Scripts/python.exe', [
-            path.join(__dirname, '..', 'modelapi.py'),
-            path.resolve(imagePath)
-        ]);
+        // Process image with Node.js function instead of Python script
+        const result = await detectWildlife(path.resolve(imagePath));
 
-        let pythonOutput = '';
-        let pythonError = '';
-
-        pythonProcess.stdout.on('data', (data) => {
-            pythonOutput += data.toString();
-        });
-
-        pythonProcess.stderr.on('data', (data) => {
-            pythonError += data.toString();
-        });
-
-        pythonProcess.on('close', async (code) => {
-            try {
-                if (code !== 0) {
-                    console.error('Python script error:', pythonError);
-                    throw new Error('Model prediction failed');
-                }
-
-                const result = JSON.parse(pythonOutput.trim());
-
-                if (!result.success) {
-                    throw new Error(result.error || 'Detection failed');
-                }
-
-                console.log(`🎯 Detection results: ${result.total_detections} animals detected`);
-
-                // Handle wildlife detections with database connection check
-                if (result.detections && result.detections.length > 0) {
-
-
-                    const cameraLocation = process.env.CAMERA_PINCODE || '633800';
-                    const usersInArea = await User.findByPincode(cameraLocation);
-
-                    if (usersInArea.length > 0) {
-                        // Send email alerts
-                        const emailResults = await emailService.sendWildlifeAlert(
-                            usersInArea,
-                            result.detections,
-                            cameraLocation
-                        );
-
-                        // Update user alert counts
-                        const updatePromises = usersInArea.map(user => user.incrementAlerts());
-                        await Promise.all(updatePromises);
-
-                        console.log(`🚨 WILDLIFE ALERT: Notified ${emailResults.successful} users in pincode ${cameraLocation}`);
-
-                        res.status(200).json({
-                            success: true,
-                            alert: true,
-                            message: `⚠️ WILDLIFE DETECTED! ${result.detections.length} animal(s) found. Emergency alerts sent to ${emailResults.successful} registered users in the monitoring area.`,
-                            data: {
-                                detections: result.detections,
-                                location: cameraLocation,
-                                alertsSent: emailResults.successful,
-                                totalUsers: usersInArea.length,
-                                timestamp: new Date().toISOString()
-                            }
-                        });
-                    } else {
-                        console.log(`⚠️ Wildlife detected but no users registered in pincode ${cameraLocation}`);
-
-                        res.status(200).json({
-                            success: true,
-                            alert: true,
-                            message: `Wildlife detected but no users are registered in the monitoring area (${cameraLocation}).`,
-                            data: {
-                                detections: result.detections,
-                                location: cameraLocation,
-                                alertsSent: 0,
-                                totalUsers: 0
-                            }
-                        });
-                    }
-                } else {
-                    console.log('✅ No wildlife detected in image');
-
-                    res.status(200).json({
-                        success: true,
-                        alert: false,
-                        message: '✅ No wildlife detected in the uploaded image. Area appears safe.',
-                        data: {
-                            detections: [],
-                            location: process.env.CAMERA_PINCODE || '633800',
-                            alertsSent: 0
-                        }
-                    });
-                }
-
-            } catch (parseError) {
-                console.error('Error processing detection results:', parseError);
-
-                if (parseError.message.includes('connection') || parseError.message.includes('timeout')) {
-                    return res.status(503).json({
-                        success: false,
-                        message: 'Database connection issue during alert processing'
-                    });
-                }
-
-                res.status(500).json({
-                    success: false,
-                    message: 'Failed to process detection results',
-                    error: parseError.message
-                });
-            } finally {
-                // Clean up uploaded file
-                if (imagePath && fs.existsSync(imagePath)) {
-                    fs.unlinkSync(imagePath);
-                }
-            }
-        });
-
-        // Handle Python process errors
-        pythonProcess.on('error', (error) => {
-            console.error('Failed to start Python process:', error);
-            if (imagePath && fs.existsSync(imagePath)) {
-                fs.unlinkSync(imagePath);
-            }
-            res.status(500).json({
-                success: false,
-                message: 'Detection service unavailable',
-                error: 'Failed to start detection process'
-            });
-        });
-
-    } catch (error) {
-        console.error('Detection route error:', error);
-
-        if (imagePath && fs.existsSync(imagePath)) {
-            fs.unlinkSync(imagePath);
+        if (!result.success) {
+            throw new Error(result.error || 'Detection failed');
         }
 
+        console.log(`🎯 Detection results: ${result.total_detections} animals detected`);
+
+        // Handle wildlife detections with database connection check
+        if (result.detections && result.detections.length > 0) {
+            const cameraLocation = process.env.CAMERA_PINCODE || '633800';
+            const usersInArea = await User.findByPincode(cameraLocation);
+
+            if (usersInArea.length > 0) {
+                // Send email alerts
+                const emailResults = await emailService.sendWildlifeAlert(
+                    usersInArea,
+                    result.detections,
+                    cameraLocation
+                );
+
+                // Update user alert counts
+                const updatePromises = usersInArea.map(user => user.incrementAlerts());
+                await Promise.all(updatePromises);
+
+                console.log(`🚨 WILDLIFE ALERT: Notified ${emailResults.successful} users in pincode ${cameraLocation}`);
+
+                res.status(200).json({
+                    success: true,
+                    alert: true,
+                    message: `⚠️ WILDLIFE DETECTED! ${result.detections.length} animal(s) found. Emergency alerts sent to ${emailResults.successful} registered users in the monitoring area.`,
+                    data: {
+                        detections: result.detections,
+                        location: cameraLocation,
+                        alertsSent: emailResults.successful,
+                        totalUsers: usersInArea.length,
+                        timestamp: new Date().toISOString()
+                    }
+                });
+            } else {
+                console.log(`⚠️ Wildlife detected but no users registered in pincode ${cameraLocation}`);
+
+                res.status(200).json({
+                    success: true,
+                    alert: true,
+                    message: `Wildlife detected but no users are registered in the monitoring area (${cameraLocation}).`,
+                    data: {
+                        detections: result.detections,
+                        location: cameraLocation,
+                        alertsSent: 0,
+                        totalUsers: 0
+                    }
+                });
+            }
+        } else {
+            console.log('✅ No wildlife detected in image');
+
+            res.status(200).json({
+                success: true,
+                alert: false,
+                message: '✅ No wildlife detected in the uploaded image. Area appears safe.',
+                data: {
+                    detections: [],
+                    location: process.env.CAMERA_PINCODE || '633800',
+                    alertsSent: 0
+                }
+            });
+        }
+
+    } catch (error) {
+        console.error('Error processing detection:', error);
+
+        // Handle specific error types
         if (error.message.includes('connection') || error.message.includes('timeout')) {
             return res.status(503).json({
                 success: false,
-                message: 'Database connection issue. Please try again.'
+                message: 'Database connection issue during alert processing'
+            });
+        }
+
+        if (error.message.includes('API request failed')) {
+            return res.status(502).json({
+                success: false,
+                message: 'Wildlife detection service temporarily unavailable'
             });
         }
 
         res.status(500).json({
             success: false,
-            message: 'Wildlife detection failed',
+            message: 'Failed to process detection results',
             error: error.message
         });
+
+    } finally {
+        // Clean up uploaded file
+        if (imagePath && fs.existsSync(imagePath)) {
+            try {
+                fs.unlinkSync(imagePath);
+                console.log(`🗑️ Cleaned up uploaded file: ${imagePath}`);
+            } catch (cleanupError) {
+                console.error('Error cleaning up file:', cleanupError);
+            }
+        }
     }
 });
-
 // Get users by pincode with connection check
 router.get('/users/pincode/:pincode', async (req, res) => {
     try {
