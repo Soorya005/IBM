@@ -84,3 +84,4 @@ userSchema.statics.getStats = async function () {
 };
 
 module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchema);
