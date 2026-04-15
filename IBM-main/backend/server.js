@@ -34,3 +34,4 @@ app.use('/api', apiRoutes);
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🎉 Wildlife Detection System Backend is running on port ${PORT}`);
 });
+print(hi)
